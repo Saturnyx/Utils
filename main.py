@@ -8,14 +8,11 @@ from dotenv import load_dotenv
 from typing import Optional
 import json
 
-# Load environment variables
 load_dotenv()
 
-# Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Bot setup with intents
 intents = discord.Intents.default()
 intents.message_content = True
 intents.guilds = True
@@ -23,7 +20,6 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# Configuration file for auto-cleanup settings
 CONFIG_FILE = "bot_config.json"
 
 
@@ -51,7 +47,6 @@ async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     print(f"Bot is in {len(bot.guilds)} guilds")
 
-    # Load cogs
     try:
         await bot.load_extension("cogs.advanced_utils")
         print("Advanced utilities cog loaded successfully")
@@ -64,7 +59,6 @@ async def on_ready():
     except Exception as e:
         print(f"Failed to load help cog: {e}")
 
-    # Start auto cleanup task if enabled
     if config.get("cleanup_enabled", False):
         auto_cleanup.start()
         print("Auto cleanup task started")
@@ -85,7 +79,7 @@ async def clear_messages(ctx, amount: int = 10):
     try:
         deleted = await ctx.channel.purge(
             limit=amount + 1
-        )  # +1 to include the command message
+        )
         await ctx.send(f"✅ Deleted {len(deleted) - 1} messages.", delete_after=5)
         logger.info(
             f"Cleared {len(deleted) - 1} messages in {ctx.channel.name} by {ctx.author}"
@@ -122,7 +116,7 @@ async def clear_all_messages(ctx):
         async for message in ctx.channel.history(limit=None):
             await message.delete()
             deleted += 1
-            if deleted % 10 == 0:  # Progress update every 10 deletions
+            if deleted % 10 == 0:  
                 print(f"Deleted {deleted} messages...")
 
         await ctx.send(f"✅ Deleted all {deleted} messages from this channel.")
@@ -197,7 +191,7 @@ async def server_stats(ctx):
     """Get comprehensive server statistics"""
     guild = ctx.guild
 
-    # Basic server info
+    
     embed = discord.Embed(
         title=f"📊 Server Statistics for {guild.name}",
         color=discord.Color.blue(),
@@ -206,7 +200,7 @@ async def server_stats(ctx):
 
     embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
 
-    # Member stats
+
     total_members = guild.member_count
     online_members = len(
         [m for m in guild.members if m.status != discord.Status.offline]
@@ -220,7 +214,7 @@ async def server_stats(ctx):
         inline=True,
     )
 
-    # Channel stats
+    
     text_channels = len(guild.text_channels)
     voice_channels = len(guild.voice_channels)
     categories = len(guild.categories)
@@ -231,7 +225,7 @@ async def server_stats(ctx):
         inline=True,
     )
 
-    # Role and emoji stats
+    
     roles = len(guild.roles)
     emojis = len(guild.emojis)
 
@@ -239,7 +233,7 @@ async def server_stats(ctx):
         name="🎭 Other", value=f"Roles: {roles}\nEmojis: {emojis}", inline=True
     )
 
-    # Server info
+    
     embed.add_field(
         name="ℹ️ Server Info",
         value=f"Created: {guild.created_at.strftime('%B %d, %Y')}\nOwner: {guild.owner.mention if guild.owner else 'Unknown'}\nBoost Level: {guild.premium_tier}",
@@ -255,12 +249,12 @@ async def channel_stats(ctx, channel: Optional[discord.TextChannel] = None):
     if channel is None:
         channel = ctx.channel
 
-    # Ensure we have a text channel
+   
     if not isinstance(channel, discord.TextChannel):
         await ctx.send("❌ This command only works with text channels.")
         return
 
-    # Count messages in the last 24 hours, 7 days, and total
+    
     now = datetime.now(timezone.utc)
     day_ago = now - timedelta(days=1)
     week_ago = now - timedelta(days=7)
@@ -367,7 +361,7 @@ async def list_auto_cleanup(ctx):
     await ctx.send(embed=embed)
 
 
-@tasks.loop(hours=24)  # Run once per day
+@tasks.loop(hours=24)  
 async def auto_cleanup():
     """Automatically cleanup old messages in configured channels"""
     for channel_id, settings in config["auto_cleanup"].items():
@@ -388,7 +382,7 @@ async def auto_cleanup():
                     f"Auto cleanup: Deleted {len(deleted)} messages from #{channel.name}"
                 )
 
-                # Log to a specific channel if configured
+                
                 log_channel_id = os.getenv("LOG_CHANNEL_ID")
                 if log_channel_id:
                     log_channel = bot.get_channel(int(log_channel_id))
@@ -405,7 +399,7 @@ async def auto_cleanup():
             logger.error(f"Error in auto cleanup for channel {channel_id}: {e}")
 
 
-# Error handling
+
 @bot.event
 async def on_command_error(ctx, error):
     """Handle command errors"""

@@ -47,7 +47,6 @@ class AdvancedUtils(commands.Cog):
             )
             return
 
-        # Create a simple text backup
         backup_content = f"Channel Backup: #{channel.name}\n"
         backup_content += f"Generated: {datetime.now(timezone.utc).isoformat()}\n"
         backup_content += f"Total Messages: {len(messages)}\n"
@@ -61,7 +60,6 @@ class AdvancedUtils(commands.Cog):
                 backup_content += f"  Attachments: {', '.join(msg['attachments'])}\n"
             backup_content += "\n"
 
-        # Save to file and send
         filename = (
             f"backup_{channel.name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
         )
@@ -75,7 +73,6 @@ class AdvancedUtils(commands.Cog):
                 file=discord.File(filename),
             )
 
-            # Clean up the file
             import os
 
             os.remove(filename)
@@ -88,13 +85,11 @@ class AdvancedUtils(commands.Cog):
         """Get detailed member count breakdown"""
         guild = ctx.guild
 
-        # Count members by status
         online = len([m for m in guild.members if m.status == discord.Status.online])
         idle = len([m for m in guild.members if m.status == discord.Status.idle])
         dnd = len([m for m in guild.members if m.status == discord.Status.dnd])
         offline = len([m for m in guild.members if m.status == discord.Status.offline])
 
-        # Count bots vs humans
         bots = len([m for m in guild.members if m.bot])
         humans = guild.member_count - bots
 
@@ -166,7 +161,6 @@ class AdvancedUtils(commands.Cog):
             inline=True,
         )
 
-        # List some members if the role has few members
         if len(role.members) <= 10:
             member_list = "\n".join([member.display_name for member in role.members])
             embed.add_field(
@@ -245,15 +239,12 @@ class AdvancedUtils(commands.Cog):
 
         embed.add_field(
             name="🎭 Roles",
-            value=f"{len(user.roles) - 1} roles",  # -1 to exclude @everyone
+            value=f"{len(user.roles) - 1} roles",
             inline=True,
         )
 
-        # List roles if not too many
         if len(user.roles) <= 15:
-            role_list = ", ".join(
-                [role.name for role in user.roles[1:]]
-            )  # Skip @everyone
+            role_list = ", ".join([role.name for role in user.roles[1:]])
             if role_list:
                 embed.add_field(name="🎭 Role List", value=role_list, inline=False)
 

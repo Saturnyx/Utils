@@ -7,14 +7,14 @@ class Help(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        bot.remove_command("help")  # Remove default help command
+        bot.remove_command("help")
 
     @commands.command(name="help")
     async def custom_help(self, ctx, *, command_name: str = None):
         """Show help information for commands"""
 
         if command_name:
-            # Show help for specific command
+
             cmd = self.bot.get_command(command_name.lower())
             if not cmd:
                 await ctx.send(f"❌ Command `{command_name}` not found.")
@@ -54,14 +54,12 @@ class Help(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        # Show general help
         embed = discord.Embed(
             title="🤖 Discord Utils Bot - Help",
             description="A comprehensive utility bot for Discord server management.",
             color=discord.Color.blue(),
         )
 
-        # Message Management Commands
         cleanup_commands = [
             ("clear [amount]", "Clear specified number of messages (default: 10)"),
             ("clearall", "Clear ALL messages in channel (requires confirmation)"),
@@ -74,7 +72,6 @@ class Help(commands.Cog):
         )
         embed.add_field(name="🧹 Message Management", value=cleanup_text, inline=False)
 
-        # Statistics Commands
         stats_commands = [
             ("stats", "Show comprehensive server statistics"),
             ("channelstats [channel]", "Show statistics for a specific channel"),
@@ -86,7 +83,6 @@ class Help(commands.Cog):
         stats_text = "\n".join([f"`!{cmd}` - {desc}" for cmd, desc in stats_commands])
         embed.add_field(name="📊 Statistics", value=stats_text, inline=False)
 
-        # Auto Cleanup Commands
         auto_commands = [
             ("autocleanup <channel> [days]", "Enable auto cleanup for a channel"),
             ("stopauto [channel]", "Stop auto cleanup for a channel"),
@@ -96,7 +92,6 @@ class Help(commands.Cog):
         auto_text = "\n".join([f"`!{cmd}` - {desc}" for cmd, desc in auto_commands])
         embed.add_field(name="🔄 Auto Cleanup", value=auto_text, inline=False)
 
-        # Utility Commands
         util_commands = [
             ("backup <channel> [limit]", "Create a backup of channel messages"),
             ("slowmode [seconds]", "Set slowmode for the current channel"),

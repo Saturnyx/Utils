@@ -51,13 +51,11 @@ def create_env_file():
             print("⏭️ Skipping .env file creation.")
             return True
 
-    # Copy template
     with open(env_example, "r") as f:
         content = f.read()
 
     print("\n🔑 Please provide your Discord bot configuration:")
 
-    # Get bot token
     token = input("Enter your Discord bot token: ").strip()
     if not token:
         print("❌ Bot token is required!")
@@ -65,14 +63,12 @@ def create_env_file():
 
     content = content.replace("your_bot_token_here", token)
 
-    # Get log channel ID (optional)
     log_channel = input(
         "Enter log channel ID (optional, press Enter to skip): "
     ).strip()
     if log_channel:
         content = content.replace("your_log_channel_id_here", log_channel)
 
-    # Write .env file
     with open(env_file, "w") as f:
         f.write(content)
 
@@ -126,23 +122,23 @@ def main():
     print("🤖 Discord Utils Bot Setup")
     print("=" * 30)
 
-    # Check Python version
+    # --- Check Python version
     if not check_python_version():
         return False
 
-    # Install requirements
+    # --- Install requirements
     if not install_requirements():
         return False
 
-    # Create .env file
+    # --- Create .env file
     if not create_env_file():
         return False
 
-    # Create directories
+    # --- Create directories
     if not create_directories():
         return False
 
-    # Display final instructions
+    # --- Display final instructions
     display_setup_instructions()
 
     return True
